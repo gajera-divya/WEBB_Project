@@ -1,43 +1,42 @@
-# 📈 Streamlit Stock & Portfolio Analysis App
+# 📈 Technical Analysis & Portfolio Web App
 
-An interactive **Streamlit** web app for **single-stock** and **portfolio-level** financial analysis. This app pulls historical data, applies a wide range of **technical indicators**, and visualizes performance and risk metrics for better investment insights.
+A comprehensive **Streamlit web application** for performing **technical analysis** on individual stocks and evaluating **portfolio performance** using real-time market data from Yahoo Finance. The app includes a broad suite of technical indicators, interactive charts, and portfolio statistics.
 
 ---
 
 ## 🚀 Features
 
-### 📊 Single Stock Mode
-- Fetch and visualize price data from Yahoo Finance
-- Apply technical indicators:
-  - Moving Averages
-  - RSI
+### 📊 Single Stock Analysis
+- Pulls stock data via **Yahoo Finance**
+- Applies key technical indicators:
+  - Moving Averages (MA)
+  - Relative Strength Index (RSI)
   - Bollinger Bands
   - MACD
   - Stochastic Oscillator
   - Ichimoku Cloud
   - Fibonacci Levels
-- Interactive price charts with Plotly
+- Visualizes data with interactive Plotly charts
 
-### 📁 Portfolio Mode
-- Analyze multiple stocks at once
+### 📁 Portfolio Analysis
+- Input multiple stock tickers
 - View:
   - Cumulative Returns
   - Annualized Volatility
   - Sharpe Ratio
   - Correlation Matrix (heatmap)
-- Compare performance side-by-side
+- Compare performance side by side
 
 ---
 
-## 🧱 Tech Stack
+## 🧱 Project Structure
 
-- **Frontend**: Streamlit
-- **Data Sources**: Yahoo Finance via `yfinance`
-- **Indicators**: `ta` (Technical Analysis Library)
-- **Visualization**: Plotly, Seaborn, Matplotlib
-- **Caching & Storage**: SQLite via `fetcher.py`
-
----
-
-## 📂 Project Structure
-
+```bash
+technical-analysis-app/
+├── app.py                      # Main Streamlit app
+├── fetcher.py                  # Handles data download & caching (e.g., via SQLite)
+├── technical_indicators.py     # All technical indicator functions (ta, pandas-based)
+├── requirements.txt            # List of required Python libraries
+├── README.md                   # Project documentation
+├── database.db                 # SQLite database for local caching (auto-generated)
+└── assets/                     # (Optional) Static files like logos, images, etc.
