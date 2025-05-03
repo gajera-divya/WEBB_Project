@@ -39,4 +39,3 @@ technical-analysis-app/
 ├── requirements.txt            # List of required Python libraries
 ├── README.md                   # Project documentation
 ├── database.db                 # SQLite database for local caching (auto-generated)
-└── assets/                     # (Optional) Static files like logos, images, etc.
