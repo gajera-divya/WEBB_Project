@@ -1,28 +1,9 @@
-# app.py
+# plot_utils.py
 import streamlit as st
-import pandas as pd
-import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.express as px
-import seaborn as sns
-import matplotlib.pyplot as plt
 
-from custom_ui import (
-    apply_custom_styling, create_main_header
-)
-from stock_mode import run_single_stock_mode
-from portfolio_mode import run_portfolio_mode
-
-
-# ------------------ Page Config ------------------
-st.set_page_config(layout="wide", page_title="\U0001F4C8 Stock & Portfolio Dashboard")
-apply_custom_styling()
-create_main_header("\U0001F4CA Stock & Portfolio Dashboard")
-
-mode = st.sidebar.radio("Select Mode", ["Single Stock", "Portfolio"])
-
-# ------------------ Charting Functions ------------------
 
 def plot_price_chart(df, ticker):
     fig = make_subplots(
@@ -52,12 +33,14 @@ def plot_price_chart(df, ticker):
 
     st.plotly_chart(fig, use_container_width=True)
 
+
 def plot_line_chart(df, title):
     fig = go.Figure()
     for col in df.columns:
         fig.add_trace(go.Scatter(x=df.index, y=df[col], name=col))
     fig.update_layout(title=title, template="plotly_white")
     st.plotly_chart(fig, use_container_width=True)
+
 
 def plot_correlation_heatmap(corr_matrix, chart_style):
     fig = go.Figure(data=go.Heatmap(
@@ -72,6 +55,7 @@ def plot_correlation_heatmap(corr_matrix, chart_style):
         height=600, width=800, margin=dict(l=0, r=0, t=50, b=0)
     )
     return fig
+
 
 def plot_indicators_with_price(df, indicators, fib_levels, ticker):
     fig = go.Figure()
@@ -126,11 +110,3 @@ def plot_indicators_with_price(df, indicators, fib_levels, ticker):
         height=600, margin=dict(t=40, b=20)
     )
     st.plotly_chart(fig, use_container_width=True)
-
-# ------------------ Modes ------------------
-
-if mode == "Single Stock":
-    run_single_stock_mode()
-
-elif mode == "Portfolio":
-    run_portfolio_mode()
