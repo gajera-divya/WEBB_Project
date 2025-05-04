@@ -10,7 +10,7 @@ A powerful interactive dashboard built with **Streamlit** for analyzing individu
 - Fetch historical data using a custom API fetcher
 - Plot interactive candlestick charts with volume
 - Apply technical indicators:
-  - Moving Averages (MA20, MA50, MA100, MA200)
+  - Moving Averages
   - RSI, MACD, Bollinger Bands
   - Stochastic Oscillator, Ichimoku Cloud
   - Fibonacci Levels
