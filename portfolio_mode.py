@@ -1,4 +1,3 @@
-# portfolio_mode.py
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -19,10 +18,8 @@ def run_portfolio_mode():
     end = st.sidebar.date_input("End", pd.to_datetime("today"))
 
     with st.sidebar.expander("Portfolio Settings"):
-        weights_input = st.text_input(
-            "Custom Weights (e.g., AAPL:0.5, MSFT:0.3, TSLA:0.2)", ""
-        )
-        horizon = st.selectbox("Investment Horizon", ["Daily", "Monthly", "Yearly"], index=0)
+        weights_input = st.text_input("Custom Weights (e.g., AAPL:0.5, MSFT:0.3, TSLA:0.2)", "")
+        investment_years = st.slider("Investment Duration (Years)", 0.25, 5.0, 1.0, step=0.25)
 
     if st.sidebar.button("Analyze Portfolio") and tickers:
         portfolio_data = {}
@@ -52,20 +49,17 @@ def run_portfolio_mode():
                 daily_returns, weights
             )
 
-        freq_map = {"Daily": 252, "Monthly": 12, "Yearly": 1}
-        scale_factor = freq_map.get(horizon, 252)
-
-        mean_returns = daily_returns.mean() * scale_factor
-        cov_matrix = daily_returns.cov() * scale_factor
+        mean_returns = daily_returns.mean() * 252
+        cov_matrix = daily_returns.cov() * 252
 
         weighted_returns = daily_returns.mul(pd.Series(weights), axis=1).sum(axis=1)
         portfolio_cum = (1 + weighted_returns).cumprod()
 
         tabs = st.tabs([
-            "📈 Prices", 
-            "📊 Performance",
-            "⚙️ Optimization", 
-            "📊 Correlation"
+            "\U0001F4C8 Prices", 
+            "\U0001F4CA Performance",
+            "\u2699\ufe0f Optimization", 
+            "\U0001F4C9 Correlation"
         ])
 
         # Prices Tab
@@ -73,12 +67,12 @@ def run_portfolio_mode():
             st.subheader("Portfolio Close Prices")
             st.plotly_chart(px.line(combined_df, title="Portfolio Close Prices"),
                             use_container_width=True)
-            st.download_button("💾 Download Data", combined_df.to_csv().encode(),
+            st.download_button("\U0001F4C5 Download Data", combined_df.to_csv().encode(),
                                "portfolio_data.csv", "text/csv")
 
         # Performance Tab
         with tabs[1]:
-            st.subheader("📈 Cumulative Returns (%)")
+            st.subheader("\U0001F4C8 Cumulative Returns (%)")
             fig = go.Figure()
             for ticker in tickers:
                 fig.add_trace(go.Scatter(
@@ -98,17 +92,16 @@ def run_portfolio_mode():
             )
             st.plotly_chart(fig, use_container_width=True)
 
-            # Risk metrics
             peak = portfolio_cum.cummax()
             drawdown = (portfolio_cum - peak) / peak
             max_drawdown = drawdown.min()
             var_95 = weighted_returns.quantile(0.05)
 
             col1, col2 = st.columns(2)
-            col1.metric("📉 Max Drawdown", f"{max_drawdown:.2%}")
-            col2.metric("⚠️ 95% VaR (1D)", f"{var_95:.2%}")
+            col1.metric("\U0001F4C9 Max Drawdown", f"{max_drawdown:.2%}")
+            col2.metric("\u26A0\ufe0f 95% VaR (1D)", f"{var_95:.2%}")
 
-            st.subheader("📊 Asset Allocation")
+            st.subheader("\U0001F4C8 Asset Allocation")
             fig = px.pie(
                 names=list(weights.keys()), 
                 values=list(weights.values()),
@@ -116,19 +109,30 @@ def run_portfolio_mode():
             )
             st.plotly_chart(fig, use_container_width=True)
 
-        # Optimization Tab        # Optimization Tab
+        # Optimization Tab
         with tabs[2]:
             st.subheader("⚙️ Portfolio Optimization")
-            st.info(f"Optimization based on {horizon.lower()} returns annualized to 1 year.")
 
             opt_result = optimize_portfolio(mean_returns, cov_matrix)
             opt_weights = pd.Series(opt_result.x, index=mean_returns.index)
+
             opt_return = np.dot(opt_weights, mean_returns)
             opt_risk = np.sqrt(np.dot(opt_weights.T, np.dot(cov_matrix, opt_weights)))
 
+            scaled_return = opt_return * investment_years
+            scaled_risk = opt_risk * np.sqrt(investment_years)
+
+            opt_returns_series = daily_returns @ opt_weights
+            opt_var = opt_returns_series.quantile(0.05)
+            opt_cvar = opt_returns_series[opt_returns_series <= opt_var].mean()
+
             col1, col2 = st.columns(2)
-            col1.metric("📈 Expected Annual Return", f"{opt_return:.2%}")
-            col2.metric("📉 Expected Annual Volatility", f"{opt_risk:.2%}")
+            col1.metric("📈 Projected Return", f"{scaled_return:.2%}")
+            col2.metric("📉 Expected Volatility", f"{scaled_risk:.2%}")
+
+            col3, col4 = st.columns(2)
+            col3.metric("⚠️ VaR (95%)", f"{opt_var:.2%}")
+            col4.metric("🔻 CVaR (95%)", f"{opt_cvar:.2%}")
 
             # Show optimal weights before efficient frontier
             st.subheader("📊 Optimal Weights")
@@ -149,7 +153,6 @@ def run_portfolio_mode():
                     "Weight": opt_weights.values
                 }).set_index("Asset").style.format({"Weight": "{:.2%}"}))
 
-            # Then show efficient frontier
             st.subheader("📈 Efficient Frontier")
             frontier_df = efficient_frontier(mean_returns, cov_matrix)
             fig = px.scatter(
