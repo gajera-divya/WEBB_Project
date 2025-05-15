@@ -47,7 +47,7 @@ A powerful interactive dashboard built with **Streamlit** for analyzing individu
 ## 📝 File Structure
 ```bash
 .
-├── db/                       # SQLite database storage
+├── db/market_data.db                       # SQLite database storage
 ├── app.py                      # Entry point
 ├── stock_mode.py              # Single stock mode logic
 ├── portfolio_mode.py          # Portfolio analysis & optimization
