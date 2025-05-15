@@ -36,7 +36,7 @@ A powerful interactive dashboard built with **Streamlit** for analyzing individu
 ---
 
 ## ⚡ Tech Stack
-- **Python 3.9+**
+- **Python**
 - **Streamlit** for the web UI
 - **Plotly** for interactive charts
 - **Pandas / NumPy** for data manipulation
