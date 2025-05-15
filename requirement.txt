@@ -1,8 +1,12 @@
-streamlit
-pandas
-numpy
-plotly
-yfinance
-ta
-matplotlib
-seaborn
+Python == 3.11.5
+matplotlib==3.8.2
+numpy==1.26.4
+pandas==2.0.3
+pathlib==1.0.1
+plotly==5.9.0
+requests==2.31.0
+scipy==1.11.1
+seaborn==0.12.2
+streamlit==1.35.0
+ta==0.11.0
+yfinance==0.2.57
