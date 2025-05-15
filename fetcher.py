@@ -38,29 +38,16 @@ def fetch_and_store_data(ticker, start_date=None, end_date=None, db_path=DB_PATH
     """
 
     if start_date == None:
-        start_date = "2005-01-01"
+        start_date = pd.to_datetime("2005-01-01")
     if end_date == None:
-        end_date = datetime.now().strftime("%Y-%m-%d")
-    # Convert strings to datetime objects
-    if isinstance(start_date, datetime):
-        start = start_date
-    elif isinstance(start_date, date):
-        start = datetime.combine(start_date, datetime.min.time())
-    else:
-        start = datetime.strptime(start_date, "%Y-%m-%d")
+        end_date = datetime.now()
+    start_dt = datetime.combine(start_date, datetime.min.time())
+    end_dt = datetime.combine(end_date, datetime.min.time())
 
-    if isinstance(end_date, datetime):
-        end = end_date
-    elif isinstance(end_date, date):
-        end = datetime.combine(end_date, datetime.min.time())
-    else:
-        end = datetime.strptime(end_date, "%Y-%m-%d")
+    period1 = int(start_dt.timestamp())
+    period2 = int(end_dt.timestamp())
 
-    # Calculate difference in days
-    days_diff = (end - start).days
-    period = "{}d".format(days_diff)
-    
-    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?range={period}&interval={interval}"
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?period1={period1}&period2={period2}&interval={interval}"
     
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
