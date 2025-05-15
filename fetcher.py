@@ -5,7 +5,7 @@ from pathlib import Path
 from datetime import timedelta
 
 # Define the path to the SQLite database
-DB_DIR = Path(__file__).parent.parent / "db"
+DB_DIR = Path(__file__).parent / "db"
 DB_PATH = DB_DIR / "market_data.db"
 DB_DIR.mkdir(parents=True, exist_ok=True)
 
