@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
-
+import datetime
 from fetcher import get_data
 from portfolio_analysis import (
     parse_weights, combine_portfolio_data, calculate_portfolio_metrics
@@ -14,8 +14,19 @@ from plot_utils import plot_correlation_heatmap
 def run_portfolio_mode():
     tickers_input = st.sidebar.text_area("Tickers (comma-separated)", "AAPL, MSFT, TSLA")
     tickers = [t.strip().upper() for t in tickers_input.split(",") if t.strip()]
-    start = st.sidebar.date_input("Start", pd.to_datetime("2023-01-01"))
-    end = st.sidebar.date_input("End", pd.to_datetime("today"))
+    start = st.sidebar.date_input(
+        "Start Date", 
+        value=datetime.date(2005, 1, 1), 
+        min_value=datetime.date(1990, 1, 1), 
+        max_value=datetime.date.today()
+    )
+
+    end = st.sidebar.date_input(
+        "End Date", 
+        value=datetime.date.today(), 
+        min_value=datetime.date(1990, 1, 1), 
+        max_value=datetime.date.today()
+    )
 
     with st.sidebar.expander("Portfolio Settings"):
         weights_input = st.text_input("Custom Weights (e.g., AAPL:0.5, MSFT:0.3, TSLA:0.2)", "")
@@ -168,13 +179,8 @@ def run_portfolio_mode():
 
         # Correlation Tab
         with tabs[3]:
-            chart_style = st.selectbox(
-                "Chart Style", [
-                    "plotly_white", "plotly_dark", "plotly", "ggplot2", "seaborn"
-                ], 
-                help="Select the visual style for charts"
-            )
+        
             st.subheader("📊 Correlation Matrix")
             corr_matrix = daily_returns.corr()
-            corr_fig = plot_correlation_heatmap(corr_matrix, chart_style)
+            corr_fig = plot_correlation_heatmap(corr_matrix, chart_style="plotly_white")
             st.plotly_chart(corr_fig, use_container_width=True)

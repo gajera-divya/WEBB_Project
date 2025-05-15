@@ -2,6 +2,7 @@
 import streamlit as st
 import pandas as pd
 from fetcher import get_data
+import datetime
 from technical_indicators import (
     add_moving_averages, add_rsi, add_bollinger_bands,
     add_macd, add_stochastic, add_ichimoku, get_fibonacci_levels
@@ -11,14 +12,26 @@ from plot_utils import plot_price_chart, plot_indicators_with_price, plot_line_c
 
 def run_single_stock_mode():
     ticker = st.sidebar.text_input("Ticker", "AAPL").upper()
-    start = st.sidebar.date_input("Start Date", pd.to_datetime("2023-01-01"))
-    end = st.sidebar.date_input("End Date", pd.to_datetime("today"))
+    start = st.sidebar.date_input(
+        "Start Date", 
+        value=datetime.date(2005, 1, 1), 
+        min_value=datetime.date(1990, 1, 1), 
+        max_value=datetime.date.today()
+    )
+
+    end = st.sidebar.date_input(
+        "End Date", 
+        value=datetime.date.today(), 
+        min_value=datetime.date(1990, 1, 1), 
+        max_value=datetime.date.today()
+    )
 
     with st.sidebar.expander("Technical Indicators"):
         indicators = st.multiselect("Select Indicators", [
             "Moving Averages", "RSI", "Bollinger Bands", "MACD",
             "Stochastic Oscillator", "Ichimoku Cloud", "Fibonacci Levels"
         ])
+
 
     if st.sidebar.button("Analyze"):
         try:
